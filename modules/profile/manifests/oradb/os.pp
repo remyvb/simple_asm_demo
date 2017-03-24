@@ -90,22 +90,24 @@ class profile::oradb::os
   sysctl { 'net.core.wmem_max':             ensure => 'present', permanent => 'yes', value => '1048576',}
   sysctl { 'kernel.panic_on_oops':          ensure => 'present', permanent => 'yes', value => '1',}
 
-  # In RHEL7.2 defaults RemoveIPC to true, which will cause the database and ASM to crash
-  file_line { 'Do not remove ipc':
-    path   => '/etc/systemd/logind.conf',
-    line   => 'RemoveIPC=no',
-    match  => "^#RemoveIPC.*$",
-    notify => Exec['systemctl daemon-reload'],
-  } ->
-  exec { 'systemctl daemon-reload':
-    command     => '/bin/systemctl daemon-reload',
-    refreshonly => true,
-    require     => File_line['Do not remove ipc'],
-    notify      => Service['systemd-logind'],
-  } ->
-  service { 'systemd-logind':
-    provider   => 'systemd',
-    hasrestart => true,
-    subscribe  => Exec['systemctl daemon-reload'],
+  # In RHEL7.2 RemoveIPC defaults to true, which will cause the database and ASM to crash
+  if $::os['release']['major'] == '7' and $::os['release']['minor'] == '2' {
+    file_line { 'Do not remove ipc':
+      path   => '/etc/systemd/logind.conf',
+      line   => 'RemoveIPC=no',
+      match  => "^#RemoveIPC.*$",
+      notify => Exec['systemctl daemon-reload'],
+    } ->
+    exec { 'systemctl daemon-reload':
+      command     => '/bin/systemctl daemon-reload',
+      refreshonly => true,
+      require     => File_line['Do not remove ipc'],
+      notify      => Service['systemd-logind'],
+    } ->
+    service { 'systemd-logind':
+      provider   => 'systemd',
+      hasrestart => true,
+      subscribe  => Exec['systemctl daemon-reload'],
+    }
   }
 }
