@@ -1,18 +1,36 @@
 ---
-pe-master:
-  public_ip:        '192.168.253.10'
+pe-asmmaster:
+  public_ip:        '192.168.254.10'
   cpucount:         2
   ram:              3072
   type:             pe-master
-ml-db01:
-  public_ip:        '192.168.253.30'
-  cpucount:         4
-  ram:              8192
+ml-asm112:
+  public_ip:        '192.168.254.112'
+  cpucount:         1
   type:             masterless
   virtualboxorafix: enable
-pe-db01:
-  public_ip:        '192.168.253.30'
-  cpucount:         4
-  ram:              8192
+ml-asm121:
+  public_ip:        '192.168.254.121'
+  cpucount:         1
+  type:             masterless
+  virtualboxorafix: enable
+ml-asm122:
+  public_ip:        '192.168.254.122'
+  cpucount:         1
+  type:             masterless
+  virtualboxorafix: enable
+pe-asm112:
+  public_ip:        '192.168.254.112'
+  cpucount:         1
+  type:             pe-agent
+  virtualboxorafix: enable
+pe-asm121:
+  public_ip:        '192.168.254.121'
+  cpucount:         1
+  type:             pe-agent
+  virtualboxorafix: enable
+pe-asm122:
+  public_ip:        '192.168.254.122'
+  cpucount:         1
   type:             pe-agent
   virtualboxorafix: enable

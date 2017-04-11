@@ -1,10 +1,18 @@
 profile::base::hosts::list:
-  master.example.com:
-    ip: 192.168.253.10
+  asmmaster.example.com:
+    ip: 192.168.254.10
     host_aliases:
       - master
       - puppet
-  db01.example.com:
-    ip: 192.168.253.30
+  asm112.example.com:
+    ip: 192.168.254.112
     host_aliases:
-      - db01
+      - asm112
+  asm121.example.com:
+    ip: 192.168.254.121
+    host_aliases:
+      - asm121
+  asm122.example.com:
+    ip: 192.168.254.122
+    host_aliases:
+      - asm122

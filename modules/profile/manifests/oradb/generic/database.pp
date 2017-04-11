@@ -11,13 +11,14 @@ define profile::oradb::generic::database(
 {
   require profile::oradb
   $oracle_base = $profile::oradb::ora_base
+  $oracle_version = $profile::oradb::db_software::version
 
   #
   # All standard values fetched in data function
   #
   ora_database{$name:
     ensure                  => present,
-    init_ora_content        => template('profile/init.ora.erb'),
+    init_ora_content        => template("profile/init.ora.${oracle_version}.erb"),
     oracle_base             => $profile::oradb::ora_base,
     oracle_home             => $profile::oradb::ora_home,
     system_password         => $profile::oradb::ora_system_password,

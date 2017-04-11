@@ -7,7 +7,7 @@ This repo contains a demonstration of a simple database installation. It contain
 All nodes are available to test with Puppet masterless. To do so, add `ml-` for the name when using vagrant:
 
 ```
-$ vagrant up ml-db01
+$ vagrant up <ml-asm112|ml-asm121|ml-asm122>
 ```
 
 ## Staring the nodes with PE
@@ -15,16 +15,16 @@ $ vagrant up ml-db01
 You can also test with a Puppet Enterprise server. To do so, add `pe-` for the name when using vagrant:
 
 ```
-$ vagrant up pe-master
-$ vagrant up pe-db01
+$ vagrant up pe-asmmaster
+$ vagrant up <pe-asm112|pe-asm121|pe-asm122>
 ```
 
 ## ordering
 
 You must always use the specified order:
 
-1. master
-2. db01
+1. asmmaster
+2. <asm112|asm121|asm122>
 
 ## Required software
 

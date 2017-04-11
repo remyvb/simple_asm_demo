@@ -3,8 +3,12 @@ forge 'http://forge.enterprisemodules.com'
 mod 'puppetlabs-stdlib',             '4.12.0'
 mod 'puppetlabs-concat',             '1.2.5'
 mod 'enterprisemodules-easy_type',   '2.2.5'
-#mod 'enterprisemodules-ora_install', '2.1.8'
-#mod 'enterprisemodules-ora_config',  '2.3.4'
+mod 'enterprisemodules-ora_install',
+    :git => 'git@github.com:enterprisemodules/ora_install.git',
+    :branch => 'master'
+mod 'enterprisemodules-ora_config',
+    :git => 'git@github.com:enterprisemodules/ora_config.git',
+    :branch => 'master'
 mod 'petems-swap_file',              '1.0.x'
 mod 'fiddyspence-sysctl',            '0.0.5'
 mod 'erwbgy-limits',                 '0.3.x'

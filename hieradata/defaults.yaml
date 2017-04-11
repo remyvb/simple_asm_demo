@@ -1,21 +1,11 @@
 profile::download_dir:                                     /data/install
 profile::source_dir:                                       puppet:///modules/software
 
-profile::oradb::asm_software::version:                    12.2.0.1
-profile::oradb::asm_software::file_name:                  linuxx64_12201_grid_home
-
-profile::oradb::grid_base:                                /u01/app/grid/admin
-profile::oradb::grid_home:                                /u01/app/grid/product/12.2.0.1/grid_home1
 profile::oradb::grid_user:                                grid
 profile::oradb::grid_group:                               oinstall
 profile::oradb::asm_sys_password:                         Welcome01
 
-profile::oradb::db_software::version:                     12.2.0.1
-profile::oradb::db_software::file_name:                   linuxx64_12201_database
-profile::oradb::db_software::type:                        EE
-
 profile::oradb::ora_base:                                 /u01/app/oracle
-profile::oradb::ora_home:                                 /u01/app/oracle/product/12.2.0.1/db_home1
 profile::oradb::ora_user:                                 oracle
 profile::oradb::ora_group:                                oinstall
 profile::oradb::ora_system_password:                      Welcome01!

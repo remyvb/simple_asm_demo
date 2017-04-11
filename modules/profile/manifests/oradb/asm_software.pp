@@ -48,6 +48,11 @@ class profile::oradb::asm_software(
     syspriv     => 'sysasm',
     oracle_home => $profile::oradb::grid_home,
     os_user     => $profile::oradb::grid_user,
+  } ->
+
+  file_line{'add_asm_to_oratab':
+    path   => '/etc/oratab',
+    line   => "+ASM:${profile::oradb::grid_home}:N",
   }
 
 }
