@@ -1,0 +1,24 @@
+deployment_zone: vagrant
+
+role: role::oradb::simple_asm
+
+profile::oradb::asm_software::version:                     12.2.0.1
+profile::oradb::asm_software::file_name:                   linuxx64_12201_grid_home
+
+profile::oradb::grid_base:                                 /u01/app/grid/admin
+profile::oradb::grid_home:                                 /u01/app/grid/product/12.2.0.1/grid_home1
+
+profile::oradb::db_software::version:                      12.2.0.1
+profile::oradb::db_software::file_name:                    linuxx64_12201_database
+profile::oradb::db_software::type:                         EE
+
+profile::oradb::ora_home:                                  /u01/app/oracle/product/12.2.0.1/db_home1
+
+profile::oradb::database::db01::dbname:                    DB122
+profile::oradb::database::db01::log_size:                  100M
+profile::oradb::database::db01::user_tablespace_size:      5M
+profile::oradb::database::db01::system_tablespace_size:    50M
+profile::oradb::database::db01::temporary_tablespace_size: 50M
+profile::oradb::database::db01::undo_tablespace_size:      50M
+profile::oradb::database::db01::sysaux_tablespace_size:    50M
+profile::oradb::database::db01::container_database:        enabled

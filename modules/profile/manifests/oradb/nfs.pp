@@ -54,6 +54,12 @@ class profile::oradb::nfs {
     client_enabled => true,
   } ->
 
+  # Workaround for getting rpcbind.service enabled in systemd
+  exec { 'systemctl add-wants multi-user.target rpcbind':
+    command     => '/bin/systemctl add-wants multi-user.target rpcbind',
+    unless      => '/bin/systemctl is-enabled rpcbind.service|grep -q enabled',
+  } ->
+
   nfs::server::export{ '/home/nfs_server_data':
     ensure      => 'mounted',
     options_nfs => 'rw sync no_wdelay insecure_locks no_root_squash',
