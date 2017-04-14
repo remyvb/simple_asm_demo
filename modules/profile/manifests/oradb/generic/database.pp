@@ -18,6 +18,7 @@ define profile::oradb::generic::database(
   #
   ora_database{$name:
     ensure                  => present,
+    autostart               => false,
     init_ora_content        => template("profile/init.ora.${oracle_version}.erb"),
     oracle_base             => $profile::oradb::ora_base,
     oracle_home             => $profile::oradb::ora_home,
@@ -26,7 +27,7 @@ define profile::oradb::generic::database(
     character_set           => 'AL32UTF8',
     national_character_set  => 'AL16UTF16',
     extent_management       => 'local',
-    logfile_groups => [
+    logfile_groups          => [
         {group => 10, size => $log_size},
         {group => 10, size => $log_size},
         {group => 20, size => $log_size},
@@ -68,14 +69,11 @@ define profile::oradb::generic::database(
     timezone       => '+01:00',
   } ->
 
-  ora_install::dbactions{ "start_${name}":
-    oracle_home => $profile::oradb::ora_home,
-    db_name     => $name,
-  }
-
   ora_install::autostartdatabase{ "autostart ${name}":
     oracle_home => $profile::oradb::ora_home,
     db_name     => $name,
+    db_type     => 'grid',
+    db_domain   => 'domain.local'
   }
 
 }
