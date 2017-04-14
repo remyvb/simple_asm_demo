@@ -49,7 +49,7 @@ class profile::oradb::asm_software(
   } ->
 
   ora_setting{'+ASM':
-    default     => true,
+    default     => false,
     user        => 'sys',
     syspriv     => 'sysasm',
     oracle_home => $profile::oradb::grid_home,
