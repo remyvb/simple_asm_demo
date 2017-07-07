@@ -26,8 +26,8 @@ class profile::oradb::asm_diskgroup(
     ensure          => 'present',
     au_size         => '1',
     redundancy_type => 'EXTERNAL',
-    compat_asm      => $profile::oradb::asm_software::version,
-    compat_rdbms    => $profile::oradb::asm_software::version,
+    compat_asm      => $asm_version,
+    compat_rdbms    => $asm_version,
     disks           => [
       {'diskname' => 'RECO_0000',
        'path'     => '/nfs_client/asm_sda_nfs_b3'},

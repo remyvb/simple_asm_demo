@@ -32,6 +32,8 @@ define profile::oradb::generic::database(
         {group => 10, size => $log_size},
         {group => 20, size => $log_size},
         {group => 20, size => $log_size},
+        {group => 30, size => $log_size},
+        {group => 30, size => $log_size},
       ],
     datafiles       => [
       {size => $system_tablespace_size, autoextend => {next => '10M', maxsize => 'unlimited'}},
