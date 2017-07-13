@@ -11,7 +11,6 @@ class profile::oradb::asm_software(
 
   $dirs = [
     '/u01',
-    '/u01/app',
     '/u01/app/grid',
     '/u01/app/grid/admin',
     '/u01/app/grid/product',
@@ -23,6 +22,13 @@ class profile::oradb::asm_software(
     owner  => $profile::oradb::grid_user,
     group  => $profile::oradb::grid_group,
     mode   => '0755',
+  }
+
+  file{'/u01/app':
+    ensure => directory,
+    owner  => $profile::oradb::grid_user,
+    group  => $profile::oradb::grid_group,
+    mode   => '0775',
   } ->
 
   ora_install::installasm{$file_name:
