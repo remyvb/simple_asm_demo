@@ -1,6 +1,6 @@
 forge 'http://forge.enterprisemodules.com'
 
-mod 'puppetlabs-stdlib',             '4.12.0'
+mod 'puppetlabs-stdlib',             '4.17.0'
 mod 'puppetlabs-concat',             '1.2.5'
 mod 'enterprisemodules-easy_type',   '2.2.5'
 mod 'enterprisemodules-ora_install',

@@ -52,6 +52,7 @@ class profile::oradb::nfs {
   class { '::nfs':
     server_enabled => true,
     client_enabled => true,
+    nfs_v4_client  => false,
   } ->
 
   # Workaround for getting rpcbind.service enabled in systemd
