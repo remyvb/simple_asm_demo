@@ -1,9 +1,15 @@
 #
+# Install puppet rpm repo and puppet-agent
+#
+echo "Installing puppet-agent"
+rpm -q puppet-release || yum install -y --nogpgcheck http://yum.puppetlabs.com/puppet/puppet-release-el-7.noarch.rpm
+rpm -q puppet-agent || yum install -y --nogpgcheck puppet-agent
+rpm -q git || yum install git -y
+#
 # Install librarian puppet. We need this to download the correct set of puppet modules
 #
 echo 'Installing required gems'
-/opt/puppetlabs/puppet/bin/gem install activesupport:4.2.7.1 librarian-puppet awesome_print --no-rdoc --no-ri
-yum install git -y
+/opt/puppetlabs/puppet/bin/gem install activesupport librarian-puppet awesome_print --no-rdoc --no-ri
 
 echo 'Installing required puppet modules'
 cd /vagrant

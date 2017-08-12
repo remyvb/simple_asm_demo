@@ -16,3 +16,15 @@ profile::base::hosts::list:
     ip: 192.168.254.122
     host_aliases:
       - asm122
+  em1215.example.com:
+    ip: 192.168.253.120
+    host_aliases:
+      - em1215
+  em1310.example.com:
+    ip: 192.168.253.131
+    host_aliases:
+      - em1310
+  em1320.example.com:
+    ip: 192.168.253.132
+    host_aliases:
+      - em1320
