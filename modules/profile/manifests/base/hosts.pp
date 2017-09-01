@@ -2,9 +2,9 @@ class profile::base::hosts(
    Hash $list,
 )
 {
-  $list.each |$host, $key| {
-    host{$host:
-      * => $key,
+  $list.each |$host, $values| {
+    host { $host:
+      * => $values,
     }
   }
 }

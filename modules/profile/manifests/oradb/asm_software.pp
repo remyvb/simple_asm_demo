@@ -37,7 +37,6 @@ class profile::oradb::asm_software(
     grid_base                 => $profile::oradb::grid_base,
     grid_home                 => $profile::oradb::grid_home,
     puppet_download_mnt_point => $profile::source_dir,
-    remote_file               => true,
     sys_asm_password          => $profile::oradb::asm_sys_password,
     asm_monitor_password      => $profile::oradb::asm_sys_password,
     ora_inventory_dir         => $profile::oradb::ora_inventory_dir,
