@@ -29,7 +29,6 @@ class profile::oradb::db_software(
     oracle_base               => $profile::oradb::ora_base,
     oracle_home               => $profile::oradb::ora_home,
     puppet_download_mnt_point => $profile::source_dir,
-    remote_file               => true,
   } ->
 
   file {"${::profile::oradb::ora_base}/admin":
@@ -38,6 +37,5 @@ class profile::oradb::db_software(
     group  => $profile::oradb::ora_group,
     mode   => '0775',
   }
-
 
 }

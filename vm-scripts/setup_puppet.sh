@@ -9,11 +9,11 @@ rpm -q git || yum install git -y
 # Install librarian puppet. We need this to download the correct set of puppet modules
 #
 echo 'Installing required gems'
-/opt/puppetlabs/puppet/bin/gem install activesupport librarian-puppet awesome_print --no-rdoc --no-ri
+/opt/puppetlabs/puppet/bin/gem install r10k --no-rdoc --no-ri
 
 echo 'Installing required puppet modules'
 cd /vagrant
-/opt/puppetlabs/puppet/bin/librarian-puppet install
+/opt/puppetlabs/puppet/bin/r10k puppetfile install -c /vagrant/r10k.yaml
 
 #
 # Setup hiera search and backend. We need this to config our systems

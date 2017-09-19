@@ -1,16 +1,21 @@
 forge 'http://forge.enterprisemodules.com'
 
+moduledir 'modules'
+
+mod 'archive',                       '2.0.0'
 mod 'puppetlabs-stdlib',             '4.17.0'
-mod 'puppetlabs-concat',             '1.2.5'
-mod 'enterprisemodules-easy_type',   '2.2.5'
-mod 'enterprisemodules-ora_install',
-    :git => 'git@github.com:enterprisemodules/ora_install.git',
-    :branch => 'master'
-mod 'enterprisemodules-ora_config',
-    :git => 'git@github.com:enterprisemodules/ora_config.git',
-    :branch => 'master'
-mod 'petems-swap_file',              '1.0.x'
+mod 'puppetlabs-concat',             '4.0.1'
+mod 'enterprisemodules-easy_type'
+mod 'enterprisemodules-ora_config'
+mod 'petems-swap_file',              '4.0.0'
 mod 'fiddyspence-sysctl',            '0.0.5'
-mod 'erwbgy-limits',                 '0.3.x'
-mod 'saz-timezone',                  '3.3.x'
-mod 'derdanne-nfs'
+mod 'saz-limits',                    '2.5.0'
+mod 'saz-timezone',                  '3.3.0'
+mod 'derdanne-nfs',                  '2.0.4'
+
+# As the version that contains support for EM13c has not been released yet, check it out manually
+mod 'ora_install',                   :local => true
+mod 'role',                          :local => true
+mod 'profile',                       :local => true
+mod 'em_license',                    :local => true
+mod 'software',                      :local => true
