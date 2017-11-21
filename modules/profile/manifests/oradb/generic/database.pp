@@ -18,6 +18,8 @@ define profile::oradb::generic::database(
   #
   ora_database{$name:
     ensure                  => present,
+    force_logging           => 'enabled',
+    archivelog              => 'enabled',
     autostart               => false,
     init_ora_content        => template("profile/init.ora.${oracle_version}.erb"),
     oracle_base             => $profile::oradb::ora_base,
@@ -34,6 +36,14 @@ define profile::oradb::generic::database(
         {group => 20, size => $log_size},
         {group => 30, size => $log_size},
         {group => 30, size => $log_size},
+        {group => 40, size => $log_size, type => 'STANDBY'},
+        {group => 40, size => $log_size, type => 'STANDBY'},
+        {group => 50, size => $log_size, type => 'STANDBY'},
+        {group => 50, size => $log_size, type => 'STANDBY'},
+        {group => 60, size => $log_size, type => 'STANDBY'},
+        {group => 60, size => $log_size, type => 'STANDBY'},
+        {group => 70, size => $log_size, type => 'STANDBY'},
+        {group => 70, size => $log_size, type => 'STANDBY'},
       ],
     datafiles       => [
       {size => $system_tablespace_size, autoextend => {next => '10M', maxsize => 'unlimited'}},

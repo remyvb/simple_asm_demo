@@ -30,11 +30,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       case server['type']
       when 'masterless'
-        srv.vm.box = 'enterprisemodules/centos-7.2-x86_64-puppet' unless server['box']
+        srv.vm.box = 'enterprisemodules/centos-7.3-x86_64-nocm' unless server['box']
         srv.vm.provision :shell, path: 'vm-scripts/setup_puppet.sh'
         srv.vm.provision :shell, inline: 'puppet apply /etc/puppetlabs/code/environments/production/manifests/site.pp  --verbose --trace'
       when 'pe-master'
-        srv.vm.box = 'puppetlabs/centos-7.2-64-nocm' unless server['box']
+        srv.vm.box = 'enterprisemodules/centos-7.3-x86_64-nocm' unless server['box']
         srv.vm.synced_folder '.', '/vagrant', owner: pe_puppet_user_id, group: pe_puppet_group_id
         srv.vm.provision :shell, inline: "/vagrant/modules/software/files/#{puppet_installer} -c /vagrant/pe.conf -y"
         #
@@ -60,7 +60,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         srv.vm.provision :shell, inline: 'systemctl restart pe-puppetserver.service'
         srv.vm.provision :shell, inline: 'puppet agent -t || true'
       when 'pe-agent'
-        srv.vm.box = 'enterprisemodules/centos-7.2-x86_64-nocm' unless server['box']
+        srv.vm.box = 'enterprisemodules/centos-7.3-x86_64-nocm' unless server['box']
         #
         # First we need to instal the agent.
         #

@@ -1,5 +1,5 @@
 # Docs
-class role::oradb::simple_asm()
+class role::oradb::asm_only()
 {
   contain profile::base
   contain profile::oradb::os
@@ -7,8 +7,9 @@ class role::oradb::simple_asm()
   contain profile::oradb::asm_software
   contain profile::oradb::asm_diskgroup
   contain profile::oradb::db_software
-  contain profile::oradb::database::db01
-#  contain profile::oradb::setup_user_equivalence
+  contain profile::oradb::setup_user_equivalence
+  contain profile::oradb::setup_dg
+  # contain profile::oradb::database::db01
 
   Class['profile::base::hosts']
   -> Class['profile::oradb::os']
@@ -16,6 +17,7 @@ class role::oradb::simple_asm()
   -> Class['profile::oradb::asm_software']
   -> Class['profile::oradb::asm_diskgroup']
   -> Class['profile::oradb::db_software']
-  -> Class['profile::oradb::database::db01']
-#  -> Class['profile::oradb::setup_user_equivalence']
+  -> Class['profile::oradb::setup_user_equivalence']
+  -> Class['profile::oradb::setup_dg']
+  # -> Class['profile::oradb::database::db01']
 }

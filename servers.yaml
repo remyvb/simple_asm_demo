@@ -16,7 +16,14 @@ ml-asm121:
   virtualboxorafix: enable
 ml-asm122:
   public_ip:        '192.168.254.122'
-  cpucount:         1
+  cpucount:         2
+  ram:              8192
+  type:             masterless
+  virtualboxorafix: enable
+ml-asm123:
+  public_ip:        '192.168.254.123'
+  cpucount:         2
+  ram:              8192
   type:             masterless
   virtualboxorafix: enable
 pe-asm112:

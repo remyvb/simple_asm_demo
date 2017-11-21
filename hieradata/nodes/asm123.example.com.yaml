@@ -1,7 +1,7 @@
 ---
 deployment_zone: vagrant
 
-role: role::oradb::simple_asm
+role: role::oradb::asm_only
 
 profile::oradb::asm_software::version:                     12.2.0.1
 profile::oradb::asm_software::file_name:                   linuxx64_12201_grid_home
@@ -23,6 +23,22 @@ profile::oradb::database::db01::temporary_tablespace_size: 50M
 profile::oradb::database::db01::undo_tablespace_size:      50M
 profile::oradb::database::db01::sysaux_tablespace_size:    50M
 profile::oradb::database::db01::container_database:        enabled
+
+profile::oradb::setup_dg::dgconfig:
+  primary:
+    db_unique_name: "%{hiera('profile::oradb::database::db01::dbname')}"
+    db_hostname: 'asm122.example.com'
+    db_port: 1521
+    service_name: "%{hiera('profile::oradb::database::db01::dbname')}.domain.local"
+    instance_name: "%{hiera('profile::oradb::database::db01::dbname')}"
+    sys_password: "%{hiera('profile::oradb::ora_sys_password')}"
+  standby:
+    db_unique_name: "%{hiera('profile::oradb::database::db01::dbname')}DG"
+    db_hostname: "%{::fqdn}"
+    db_port: 1521
+    service_name: "%{hiera('profile::oradb::database::db01::dbname')}DG.domain.local"
+    instance_name: "%{hiera('profile::oradb::database::db01::dbname')}"
+    remote_listener: 'nsbamscan-a3dbam:1521'
 
 profile::oradb::setup_user_equivalence::nodes:
   - asm122.example.com

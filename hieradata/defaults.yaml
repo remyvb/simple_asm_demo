@@ -1,3 +1,4 @@
+---
 profile::download_dir:                                     /data/install
 profile::source_dir:                                       puppet:///modules/software
 

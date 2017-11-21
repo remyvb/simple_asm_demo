@@ -1,0 +1,20 @@
+connect target sys/<%= scope['::profile::oradb::setup_dg::dgconfig']['primary']['sys_password'] %>@<%= scope['::profile::oradb::setup_dg::dgconfig']['primary']['db_unique_name'] %>
+connect auxiliary sys/<%= scope['::profile::oradb::setup_dg::dgconfig']['primary']['sys_password'] %>@<%= scope['::profile::oradb::setup_dg::dgconfig']['standby']['db_unique_name'] %>
+run{
+  allocate channel prmy1 type disk;
+  allocate channel prmy2 type disk;
+  allocate auxiliary channel stby type disk;
+  duplicate target database for standby from active database
+  spfile
+  set db_unique_name='<%= scope['::profile::oradb::setup_dg::dgconfig']['standby']['db_unique_name'] %>'
+  set cluster_database='false'
+  set log_archive_max_processes='5'
+  set db_file_name_convert='DB122','<%= scope['::profile::oradb::setup_dg::dgconfig']['standby']['db_unique_name'] %>'
+  set log_file_name_convert='DB122','<%= scope['::profile::oradb::setup_dg::dgconfig']['standby']['db_unique_name'] %>'
+  set fal_client='<%= scope['::profile::oradb::setup_dg::dgconfig']['standby']['db_unique_name'] %>'
+  set fal_server='<%= scope['::profile::oradb::setup_dg::dgconfig']['primary']['db_unique_name'] %>'
+  #set remote_listener='<%= scope['::profile::oradb::setup_dg::dgconfig']['standby']['remote_listener'] %>'
+  set standby_file_management='AUTO'
+  set log_archive_config='dg_config=(<%= scope['::profile::oradb::setup_dg::dgconfig']['primary']['db_unique_name'] %>,<%= scope['::profile::oradb::setup_dg::dgconfig']['standby']['db_unique_name'] %>)'
+  ;
+}

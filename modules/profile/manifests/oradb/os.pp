@@ -61,19 +61,22 @@ class profile::oradb::os
     ensure  => present,
   }
 
-  class { 'limits':
-     config => {
-                #'*'       => { 'nofile'  => { soft => '2048' , hard => '8192', },},
-                # $::profile::oradb::ora_user  => { 'nofile' => { soft => '65536' , hard => '65536', },
-                #                                   'nproc'  => { soft => '2048'  , hard => '16384', },
-                #                                   'stack'  => { soft => '10240' , hard => '32768', },},
-                $::profile::oradb::grid_user => { 'nofile' => { soft => '65536' , hard => '65536', },
-                                                  'nproc'  => { soft => '2048'  , hard => '16384', },
-                                                  'stack'  => { soft => '10240' , hard => '32768', },},
-                },
-     use_hiera => false,
+  limits::limits { '*/nofile':
+    soft => '2048',
+    hard => '8192',
   }
-  contain limits
+  limits::limits { 'oracle/nofile':
+    soft => '65536',
+    hard => '65536',
+  }
+  limits::limits { 'oracle/nproc':
+    soft => '2048',
+    hard => '16384',
+  }
+  limits::limits { 'oracle/stack':
+    soft => '10240',
+    hard => '32768',
+  }
 
   sysctl { 'kernel.msgmnb':                 ensure => 'present', permanent => 'yes', value => '65536',}
   sysctl { 'kernel.msgmax':                 ensure => 'present', permanent => 'yes', value => '65536',}
