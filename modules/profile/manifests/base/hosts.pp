@@ -1,5 +1,5 @@
 class profile::base::hosts(
-   Hash $list,
+  Hash $list = lookup('::profile::base::hosts::list', Hash, 'hash', {}),
 )
 {
   $list.each |$host, $values| {

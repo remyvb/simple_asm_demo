@@ -2,6 +2,58 @@ deployment_zone: vagrant
 
 role: role::oradb::simple_asm
 
+# AFD:
+profile::oradb::asm_diskgroup::configure_afd: true
+profile::oradb::asm_diskgroup::disks:
+  DATA:
+    - diskname: 'DATA1'
+      path: 'AFD:DATA1'
+    - diskname: 'DATA2'
+      path: 'AFD:DATA2'
+    - diskname: 'DATA3'
+      path: 'AFD:DATA3'
+  RECO:
+    - diskname: 'RECO1'
+      path: 'AFD:RECO1'
+    - diskname: 'RECO2'
+      path: 'AFD:RECO2'
+
+# NFS:
+# profile::oradb::asm_diskgroup::configure_afd: false
+# profile::oradb::asm_diskgroup::disks:
+#   DATA:
+#     - diskname: 'DATA_0000'
+#       path: '/nfs_client/asm_sda_nfs_b1'
+#     - diskname: 'DATA_0001'
+#       path: '/nfs_client/asm_sda_nfs_b2'
+#   RECO:
+#     - diskname: 'RECO_0000'
+#       path: '/nfs_client/asm_sda_nfs_b3'
+#     - diskname: 'RECO_0001'
+#       path: '/nfs_client/asm_sda_nfs_b4'
+
+profile::oradb::disk_devices:
+  data01:
+    size: 8192
+    uuid: '1'
+    afd_label: 'DATA1'
+  data02:
+    size: 8192
+    uuid: '2'
+    afd_label: 'DATA2'
+  data03:
+    size: 8192
+    uuid: '3'
+    afd_label: 'DATA3'
+  reco01:
+    size: 8192
+    uuid: '4'
+    afd_label: 'RECO1'
+  reco02:
+    size: 8192
+    uuid: '5'
+    afd_label: 'RECO2'
+
 profile::oradb::asm_software::version:                     12.2.0.1
 profile::oradb::asm_software::file_name:                   linuxx64_12201_grid_home
 

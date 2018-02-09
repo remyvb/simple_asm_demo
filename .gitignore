@@ -26,3 +26,6 @@
 .DS_Store
 /wls12.box
 /modules/ora_cis
+.*.txt
+*.vdi
+.netrc

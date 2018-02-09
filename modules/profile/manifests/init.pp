@@ -1,4 +1,4 @@
 class profile(
-  $download_dir,
-  $source_dir,
+  Stdlib::Absolutepath $download_dir,
+  String               $source_dir,
 ){}

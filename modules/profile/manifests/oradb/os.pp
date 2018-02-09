@@ -62,40 +62,59 @@ class profile::oradb::os
   }
 
   class { 'limits':
-     config => {
-                #'*'       => { 'nofile'  => { soft => '2048' , hard => '8192', },},
-                # $::profile::oradb::ora_user  => { 'nofile' => { soft => '65536' , hard => '65536', },
-                #                                   'nproc'  => { soft => '2048'  , hard => '16384', },
-                #                                   'stack'  => { soft => '10240' , hard => '32768', },},
-                $::profile::oradb::grid_user => { 'nofile' => { soft => '65536' , hard => '65536', },
-                                                  'nproc'  => { soft => '2048'  , hard => '16384', },
-                                                  'stack'  => { soft => '10240' , hard => '32768', },},
-                },
-     use_hiera => false,
+    purge_limits_d_dir =>  false,
   }
-  contain limits
 
-  sysctl { 'kernel.msgmnb':                 ensure => 'present', permanent => 'yes', value => '65536',}
-  sysctl { 'kernel.msgmax':                 ensure => 'present', permanent => 'yes', value => '65536',}
-  sysctl { 'kernel.shmmax':                 ensure => 'present', permanent => 'yes', value => '4398046511104',}
-  sysctl { 'kernel.shmall':                 ensure => 'present', permanent => 'yes', value => '4294967296',}
-  sysctl { 'fs.file-max':                   ensure => 'present', permanent => 'yes', value => '6815744',}
-  sysctl { 'kernel.shmmni':                 ensure => 'present', permanent => 'yes', value => '4096', }
-  sysctl { 'fs.aio-max-nr':                 ensure => 'present', permanent => 'yes', value => '1048576',}
-  sysctl { 'kernel.sem':                    ensure => 'present', permanent => 'yes', value => '250 32000 100 128',}
-  sysctl { 'net.ipv4.ip_local_port_range':  ensure => 'present', permanent => 'yes', value => '9000 65500',}
-  sysctl { 'net.core.rmem_default':         ensure => 'present', permanent => 'yes', value => '262144',}
-  sysctl { 'net.core.rmem_max':             ensure => 'present', permanent => 'yes', value => '4194304', }
-  sysctl { 'net.core.wmem_default':         ensure => 'present', permanent => 'yes', value => '262144',}
-  sysctl { 'net.core.wmem_max':             ensure => 'present', permanent => 'yes', value => '1048576',}
-  sysctl { 'kernel.panic_on_oops':          ensure => 'present', permanent => 'yes', value => '1',}
+  limits::limits { '*/nofile':
+    soft => '2048',
+    hard => '8192',
+  }
+  limits::limits { 'oracle/nofile':
+    soft => '65536',
+    hard => '65536',
+  }
+  limits::limits { 'oracle/nproc':
+    soft => '2048',
+    hard => '16384',
+  }
+  limits::limits { 'oracle/stack':
+    soft => '10240',
+    hard => '32768',
+  }
+  limits::limits { 'grid/nofile':
+    soft => '65536',
+    hard => '65536',
+  }
+  limits::limits { 'grid/nproc':
+    soft => '2048',
+    hard => '16384',
+  }
+  limits::limits { 'grid/stack':
+    soft => '10240',
+    hard => '32768',
+  }
+
+  sysctl { 'kernel.msgmnb':                 ensure => 'present', value => '65536',}
+  sysctl { 'kernel.msgmax':                 ensure => 'present', value => '65536',}
+  sysctl { 'kernel.shmmax':                 ensure => 'present', value => '4398046511104',}
+  sysctl { 'kernel.shmall':                 ensure => 'present', value => '4294967296',}
+  sysctl { 'fs.file-max':                   ensure => 'present', value => '6815744',}
+  sysctl { 'kernel.shmmni':                 ensure => 'present', value => '4096', }
+  sysctl { 'fs.aio-max-nr':                 ensure => 'present', value => '1048576',}
+  sysctl { 'kernel.sem':                    ensure => 'present', value => '250 32000 100 128',}
+  sysctl { 'net.ipv4.ip_local_port_range':  ensure => 'present', value => '9000 65500',}
+  sysctl { 'net.core.rmem_default':         ensure => 'present', value => '262144',}
+  sysctl { 'net.core.rmem_max':             ensure => 'present', value => '4194304', }
+  sysctl { 'net.core.wmem_default':         ensure => 'present', value => '262144',}
+  sysctl { 'net.core.wmem_max':             ensure => 'present', value => '1048576',}
+  sysctl { 'kernel.panic_on_oops':          ensure => 'present', value => '1',}
 
   # In RHEL7.2 RemoveIPC defaults to true, which will cause the database and ASM to crash
   if $::os['release']['major'] == '7' and $::os['release']['minor'] == '2' {
     file_line { 'Do not remove ipc':
       path   => '/etc/systemd/logind.conf',
       line   => 'RemoveIPC=no',
-      match  => "^#RemoveIPC.*$",
+      match  => "^RemoveIPC=.*$",
       notify => Exec['systemctl daemon-reload'],
     } ->
     exec { 'systemctl daemon-reload':
@@ -108,6 +127,20 @@ class profile::oradb::os
       provider   => 'systemd',
       hasrestart => true,
       subscribe  => Exec['systemctl daemon-reload'],
+    }
+  }
+
+  # add udev rules for devices
+  if ( $::profile::oradb::disk_devices ) {
+    file { '/etc/udev/rules.d/99-oracle-afddevices.rules':
+      ensure  => present,
+      content => template("profile/99-oracle-afddevices.rules.erb"),
+      require => User[$::profile::oradb::grid_user],
+      notify  => Exec['apply_udev_rules'],
+    }
+    exec { 'apply_udev_rules':
+      command     => '/sbin/udevadm control --reload-rules && /sbin/udevadm trigger',
+      refreshonly => true,
     }
   }
 }

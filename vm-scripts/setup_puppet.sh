@@ -2,17 +2,29 @@
 # Install puppet rpm repo and puppet-agent
 #
 echo "Installing puppet-agent"
-rpm -q puppet-release || yum install -y --nogpgcheck http://yum.puppetlabs.com/puppet/puppet-release-el-7.noarch.rpm
-rpm -q puppet-agent || yum install -y --nogpgcheck puppet-agent
-rpm -q git || yum install git -y
+rpm -q puppet-release > /dev/null || yum install -y --nogpgcheck http://yum.puppetlabs.com/puppet/puppet-release-el-7.noarch.rpm
+rpm -q puppet-agent > /dev/null || yum install -y --nogpgcheck puppet-agent
+rpm -q git > /dev/null || yum install -y --nogpg git
+
 #
-# Install librarian puppet. We need this to download the correct set of puppet modules
+# Install r10k. We need this to download the correct set of puppet modules
 #
-echo 'Installing required gems'
-/opt/puppetlabs/puppet/bin/gem install r10k --no-rdoc --no-ri
+if ! /opt/puppetlabs/puppet/bin/gem which r10k > /dev/null 2>&1
+then
+  echo 'Installing required gems'
+  /opt/puppetlabs/puppet/bin/gem install r10k --no-rdoc --no-ri
+fi
+
+cd /vagrant
+#
+# Copy netrc file if it exists
+#
+if [ -e /vagrant/.netrc ]
+then
+  cp /vagrant/.netrc ~
+fi
 
 echo 'Installing required puppet modules'
-cd /vagrant
 /opt/puppetlabs/puppet/bin/r10k puppetfile install -c /vagrant/r10k.yaml
 
 #

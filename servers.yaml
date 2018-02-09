@@ -9,28 +9,52 @@ ml-asm112:
   cpucount:         1
   type:             masterless
   virtualboxorafix: enable
+  box:              enterprisemodules/centos-7.3-x86_64-nocm
 ml-asm121:
   public_ip:        '192.168.254.121'
   cpucount:         1
   type:             masterless
   virtualboxorafix: enable
+  box:              enterprisemodules/centos-7.3-x86_64-nocm
 ml-asm122:
   public_ip:        '192.168.254.122'
-  cpucount:         1
+  cpucount:         2
+  ram:              8192
   type:             masterless
   virtualboxorafix: enable
+  box:              enterprisemodules/ol-7.3-x86_64-nocm
+  needs_storage:    enabled
+  disks:
+    data01:
+      size: 8192
+      uuid: '1'
+    data02:
+      size: 8192
+      uuid: '2'
+    data03:
+      size: 8192
+      uuid: '3'
+    reco01:
+      size: 8192
+      uuid: '4'
+    reco02:
+      size: 8192
+      uuid: '5'
 pe-asm112:
   public_ip:        '192.168.254.112'
   cpucount:         1
   type:             pe-agent
   virtualboxorafix: enable
+  box:              enterprisemodules/centos-7.3-x86_64-nocm
 pe-asm121:
   public_ip:        '192.168.254.121'
   cpucount:         1
   type:             pe-agent
   virtualboxorafix: enable
+  box:              enterprisemodules/centos-7.3-x86_64-nocm
 pe-asm122:
   public_ip:        '192.168.254.122'
   cpucount:         1
   type:             pe-agent
   virtualboxorafix: enable
+  box:              enterprisemodules/centos-7.3-x86_64-nocm
