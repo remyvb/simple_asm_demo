@@ -2,6 +2,20 @@ deployment_zone: vagrant
 
 role: role::oradb::simple_asm
 
+# NFS:
+profile::oradb::asm_diskgroup::configure_afd: false
+profile::oradb::asm_diskgroup::disks:
+  DATA:
+    - diskname: 'DATA_0000'
+      path: '/nfs_client/asm_sda_nfs_b1'
+    - diskname: 'DATA_0001'
+      path: '/nfs_client/asm_sda_nfs_b2'
+  RECO:
+    - diskname: 'RECO_0000'
+      path: '/nfs_client/asm_sda_nfs_b3'
+    - diskname: 'RECO_0001'
+      path: '/nfs_client/asm_sda_nfs_b4'
+
 profile::oradb::asm_software::version:                     12.1.0.2
 profile::oradb::asm_software::file_name:                   linuxamd64_12102_grid
 

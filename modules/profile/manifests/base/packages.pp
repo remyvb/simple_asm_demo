@@ -1,10 +1,14 @@
 class profile::base::packages()
 {
   $required_package = [
+    'smartmontools',
   ]
 
-  package{ $required_package:
-    ensure => 'installed',
+  $required_package.each | $package | {
+    unless ( defined(Package[$package]) ) {
+      Package { $package:
+        ensure => 'installed',
+      }
+    }
   }
-
 }

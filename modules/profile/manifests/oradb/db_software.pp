@@ -1,9 +1,9 @@
 # Docs
 # TODO: Write documentation
 class profile::oradb::db_software(
-  $version,
-  $file_name,
-  $type,
+  String $version,
+  String $file_name,
+  String $type,
 )
 {
   include profile
@@ -29,6 +29,7 @@ class profile::oradb::db_software(
     oracle_base               => $profile::oradb::ora_base,
     oracle_home               => $profile::oradb::ora_home,
     puppet_download_mnt_point => $profile::source_dir,
+    ora_inventory_dir         => $profile::oradb::ora_inventory_dir,
   } ->
 
   file {"${::profile::oradb::ora_base}/admin":

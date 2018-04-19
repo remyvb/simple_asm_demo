@@ -1,13 +1,14 @@
 # Docs
 # TODO: Write documentation
 class profile::oradb::asm_software(
-  $version,
-  $file_name,
+  String $version,
+  String $file_name,
 )
 {
   include profile
   include profile::oradb
 
+  $configure_afd = lookup({name => 'profile::oradb::asm_diskgroup::configure_afd', default_value => false})
 
   $dirs = [
     '/u01',
@@ -17,21 +18,21 @@ class profile::oradb::asm_software(
     "/u01/app/grid/product/${version}",
   ]
 
-  file{$dirs:
+  file{ $dirs:
     ensure => directory,
     owner  => $profile::oradb::grid_user,
     group  => $profile::oradb::grid_group,
     mode   => '0755',
   }
 
-  file{'/u01/app':
+  file{ '/u01/app':
     ensure => directory,
     owner  => $profile::oradb::grid_user,
     group  => $profile::oradb::grid_group,
     mode   => '0775',
-  } ->
+  }
 
-  ora_install::installasm{$file_name:
+  -> ora_install::installasm{ $file_name:
     version                   => $version,
     file                      => $file_name,
     grid_base                 => $profile::oradb::grid_base,
@@ -41,21 +42,30 @@ class profile::oradb::asm_software(
     asm_monitor_password      => $profile::oradb::asm_sys_password,
     ora_inventory_dir         => $profile::oradb::ora_inventory_dir,
     asm_diskgroup             => 'DATA',
-    disk_discovery_string     => '/nfs_client/asm*',
-    disks                     => '/nfs_client/asm_sda_nfs_b1,/nfs_client/asm_sda_nfs_b2',
+    disk_discovery_string     => case $configure_afd {
+      true:  { '/dev/data*,/dev/reco*' }
+      false: { '/nfs_client/asm*' }
+    },
+    disks                     => case $configure_afd {
+      true:  { '/dev/data01' }
+      false: { '/nfs_client/asm_sda_nfs_b1,/nfs_client/asm_sda_nfs_b2' }
+    },
+    disks_failgroup_names     => '/dev/data01,',
     disk_redundancy           => 'EXTERNAL',
+    disk_au_size              => '4',
+    configure_afd             => $configure_afd,
     user                      => $profile::oradb::grid_user,
-  } ->
+  }
 
-  ora_setting{'+ASM':
+  -> ora_setting{ '+ASM':
     default     => false,
     user        => 'sys',
     syspriv     => 'sysasm',
     oracle_home => $profile::oradb::grid_home,
     os_user     => $profile::oradb::grid_user,
-  } ->
+  }
 
-  file_line{'add_asm_to_oratab':
+  -> file_line{ 'add_asm_to_oratab':
     path   => '/etc/oratab',
     line   => "+ASM:${profile::oradb::grid_home}:N",
   }
