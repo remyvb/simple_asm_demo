@@ -93,8 +93,24 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       case server['type']
       when 'masterless'
         srv.vm.box = 'enterprisemodules/centos-7.2-x86_64-puppet' unless server['box']
-        srv.vm.provision :shell, path: 'vm-scripts/setup_puppet.sh'
-        srv.vm.provision :shell, inline: 'puppet apply /etc/puppetlabs/code/environments/production/manifests/site.pp --test; if [ $? -eq 0 -o $? -eq 2 ]; then exit 0; else exit $?; fi'
+        config.trigger.after :up do
+          #
+          # Fix hostnames because Vagrant mixes it up.
+          #
+          run_remote <<-EOD
+cat > /etc/hosts<< "EOF"
+127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4
+192.168.253.10 dbmaster.example.com puppet master
+#{server['public_ip']} #{hostname}.example.com #{hostname}
+EOF
+EOD
+          run_remote  "bash /vagrant/vm-scripts/setup_puppet.sh"
+          run_remote  "puppet apply /etc/puppetlabs/code/environments/production/manifests/site.pp --test; if [ $? -eq 0 -o $? -eq 2 ]; then exit 0; else exit $?; fi"
+        end
+        config.trigger.after :provision do
+          # run_remote  "puppet apply /etc/puppetlabs/code/environments/production/manifests/site.pp --test; if [ $? -eq 0 -o $? -eq 2 ]; then exit 0; else exit $?; fi"
+          run_remote  "puppet apply /etc/puppetlabs/code/environments/production/manifests/site.pp --test"
+        end
       when 'pe-master'
         srv.vm.box = 'puppetlabs/centos-7.2-64-nocm' unless server['box']
         srv.vm.synced_folder '.', '/vagrant', owner: pe_puppet_user_id, group: pe_puppet_group_id
