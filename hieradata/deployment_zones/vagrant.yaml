@@ -1,3 +1,4 @@
+---
 profile::base::hosts::list:
   asmmaster.example.com:
     ip: 192.168.254.10

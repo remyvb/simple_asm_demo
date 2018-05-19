@@ -10,6 +10,22 @@ class profile::oradb::asm_software(
 
   $configure_afd = lookup({name => 'profile::oradb::asm_diskgroup::configure_afd', default_value => false})
 
+  if ( $configure_afd ) {
+    # add udev rules for devices
+    if ( $::profile::oradb::disk_devices ) {
+      file { '/etc/udev/rules.d/99-oracle-afddevices.rules':
+        ensure  => present,
+        content => template("profile/99-oracle-afddevices.rules.erb"),
+        require => User[$::profile::oradb::grid_user],
+        notify  => Exec['apply_udev_rules'],
+      }
+      exec { 'apply_udev_rules':
+        command     => '/sbin/udevadm control --reload-rules && /sbin/udevadm trigger',
+        refreshonly => true,
+      }
+    }
+  }
+
   $dirs = [
     '/u01',
     '/u01/app/grid',
@@ -50,7 +66,10 @@ class profile::oradb::asm_software(
       true:  { '/dev/data01' }
       false: { '/nfs_client/asm_sda_nfs_b1,/nfs_client/asm_sda_nfs_b2' }
     },
-    disks_failgroup_names     => '/dev/data01,',
+    disks_failgroup_names     => case $configure_afd {
+      true:  { '/dev/data01,' }
+      false: { '/nfs_client/asm_sda_nfs_b1,' }
+    },
     disk_redundancy           => 'EXTERNAL',
     disk_au_size              => '4',
     configure_afd             => $configure_afd,

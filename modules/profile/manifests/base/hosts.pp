@@ -1,5 +1,8 @@
+#
+# Make sure all required nodes are in the hosts file.
+#
 class profile::base::hosts(
-  Hash $list = lookup('::profile::base::hosts::list', Hash, 'hash', {}),
+  Hash $list,
 )
 {
   $list.each |$host, $values| {

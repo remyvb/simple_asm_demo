@@ -1,6 +1,25 @@
+---
 deployment_zone: vagrant
 
 role: role::oradb::simple_asm
+
+ora_profile::database::dbname:                            DB112
+ora_profile::database::version:                           11.2.0.4
+ora_profile::database::oracle_home:                       "/u01/app/oracle/product/11.2.0.4/db_home1"
+ora_profile::database::db_software::database_type:        EE
+ora_profile::database::db_software::file_name:            p13390677_112040_Linux-x86-64
+ora_profile::database::db_definition::init_ora_template:  profile/init.ora.11.2.0.4.erb
+ora_profile::database::db_patches:                        skip
+
+ora_profile::database::db_listener::oracle_home:          "%{::profile::oradb::grid_home}"
+ora_profile::database::db_listener::oracle_base:          "%{::profile::oradb::grid_base}"
+ora_profile::database::db_listener::sqlnet_version:       '11.2'
+
+
+ora_profile::database::after_groups_and_users:            profile::oradb::nfs
+ora_profile::database::after_firewall:                    profile::oradb::asm_software
+ora_profile::database::before_db_software:                profile::oradb::asm_diskgroup
+ora_profile::database::db_definition:                     ora_profile::database::db_definition_template
 
 # NFS:
 profile::oradb::asm_diskgroup::configure_afd: false
@@ -18,21 +37,4 @@ profile::oradb::asm_diskgroup::disks:
 
 profile::oradb::asm_software::version:                     11.2.0.4
 profile::oradb::asm_software::file_name:                   p13390677_112040_Linux-x86-64_3of7.zip
-
-profile::oradb::grid_base:                                 /u01/app/grid/admin
 profile::oradb::grid_home:                                 /u01/app/grid/product/11.2.0.4/grid_home1
-
-profile::oradb::db_software::version:                      11.2.0.4
-profile::oradb::db_software::file_name:                    p13390677_112040_Linux-x86-64
-profile::oradb::db_software::type:                         EE
-
-profile::oradb::ora_home:                                  /u01/app/oracle/product/11.2.0.4/db_home1
-
-profile::oradb::database::db01::dbname:                    DB112
-profile::oradb::database::db01::log_size:                  100M
-profile::oradb::database::db01::user_tablespace_size:      5M
-profile::oradb::database::db01::system_tablespace_size:    50M
-profile::oradb::database::db01::temporary_tablespace_size: 50M
-profile::oradb::database::db01::undo_tablespace_size:      50M
-profile::oradb::database::db01::sysaux_tablespace_size:    50M
-profile::oradb::database::db01::container_database:        enabled
