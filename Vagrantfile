@@ -35,11 +35,12 @@ home = ENV['HOME']
 #
 # Choose your version of Puppet Enterprise
 #
-# puppet_installer = "puppet-enterprise-2015.3.0-el-6-x86_64/puppet-enterprise-installer"
-# puppet_installer = "puppet-enterprise-2015.2.2-el-6-x86_64/puppet-enterprise-installer"
-# puppet_installer = "puppet-enterprise-2016.1.2-el-7-x86_64/puppet-enterprise-installer"
-# puppet_installer = "puppet-enterprise-2016.4.0-el-7-x86_64/puppet-enterprise-installer"
-puppet_installer = 'puppet-enterprise-2016.5.1-el-7-x86_64/puppet-enterprise-installer'
+# puppet_installer = 'puppet-enterprise-2015.3.0-el-6-x86_64/puppet-enterprise-installer'
+# puppet_installer = 'puppet-enterprise-2015.2.2-el-6-x86_64/puppet-enterprise-installer'
+# puppet_installer = 'puppet-enterprise-2016.1.2-el-7-x86_64/puppet-enterprise-installer'
+# puppet_installer = 'puppet-enterprise-2016.4.0-el-7-x86_64/puppet-enterprise-installer'
+# puppet_installer = 'puppet-enterprise-2016.5.1-el-7-x86_64/puppet-enterprise-installer'
+puppet_installer = 'puppet-enterprise-2017.3.5-el-7-x86_64/puppet-enterprise-installer'
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.ssh.insert_key = false
@@ -93,24 +94,17 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       case server['type']
       when 'masterless'
         srv.vm.box = 'enterprisemodules/centos-7.2-x86_64-puppet' unless server['box']
-        config.trigger.after :up do
-          #
-          # Fix hostnames because Vagrant mixes it up.
-          #
-          run_remote <<-EOD
+        unless File.file?(".#{hostname}.txt")
+          srv.vm.provision :shell, inline: <<-EOD
 cat > /etc/hosts<< "EOF"
 127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4
-192.168.253.10 dbmaster.example.com puppet master
+192.168.254.10 master.example.com puppet master asmmaster asmmaster.example.com
 #{server['public_ip']} #{hostname}.example.com #{hostname}
 EOF
 EOD
-          run_remote  "bash /vagrant/vm-scripts/setup_puppet.sh"
-          run_remote  "puppet apply /etc/puppetlabs/code/environments/production/manifests/site.pp --test; if [ $? -eq 0 -o $? -eq 2 ]; then exit 0; else exit $?; fi"
+          srv.vm.provision :shell, path: 'vm-scripts/setup_puppet.sh'
         end
-        config.trigger.after :provision do
-          # run_remote  "puppet apply /etc/puppetlabs/code/environments/production/manifests/site.pp --test; if [ $? -eq 0 -o $? -eq 2 ]; then exit 0; else exit $?; fi"
-          run_remote  "puppet apply /etc/puppetlabs/code/environments/production/manifests/site.pp --test"
-        end
+        srv.vm.provision :shell, inline: 'puppet apply /etc/puppetlabs/code/environments/production/manifests/site.pp --test'
       when 'pe-master'
         srv.vm.box = 'puppetlabs/centos-7.2-64-nocm' unless server['box']
         srv.vm.synced_folder '.', '/vagrant', owner: pe_puppet_user_id, group: pe_puppet_group_id
@@ -142,7 +136,9 @@ EOD
         #
         # First we need to instal the agent.
         #
-        srv.vm.provision :shell, inline: 'curl -k https://master.example.com:8140/packages/current/install.bash | sudo bash'
+        unless File.file?(".#{hostname}.txt")
+          srv.vm.provision :shell, inline: 'curl -k https://master.example.com:8140/packages/current/install.bash | sudo bash'
+        end
         #
         # The agent installation also automatically start's it. In production, this is what you want. For now we
         # want the first run to be interactive, so we see the output. Therefore, we stop the agent and wait
