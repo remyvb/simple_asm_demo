@@ -15,7 +15,7 @@ class profile::oradb::asm_software(
     if ( $::profile::oradb::disk_devices ) {
       file { '/etc/udev/rules.d/99-oracle-afddevices.rules':
         ensure  => present,
-        content => template("profile/99-oracle-afddevices.rules.erb"),
+        content => template('profile/99-oracle-afddevices.rules.erb'),
         require => User[$::profile::oradb::grid_user],
         notify  => Exec['apply_udev_rules'],
       }
@@ -59,16 +59,19 @@ class profile::oradb::asm_software(
     ora_inventory_dir         => $profile::oradb::ora_inventory_dir,
     asm_diskgroup             => 'DATA',
     disk_discovery_string     => case $configure_afd {
-      true:  { '/dev/data*,/dev/reco*' }
+      true:  { '/dev/asm_data*,/dev/asm_reco*' }
       false: { '/nfs_client/asm*' }
+      default: {}
     },
     disks                     => case $configure_afd {
-      true:  { '/dev/data01' }
+      true:  { '/dev/asm_data01' }
       false: { '/nfs_client/asm_sda_nfs_b1,/nfs_client/asm_sda_nfs_b2' }
+      default: {}
     },
     disks_failgroup_names     => case $configure_afd {
-      true:  { '/dev/data01,' }
+      true:  { '/dev/asm_data01,' }
       false: { '/nfs_client/asm_sda_nfs_b1,' }
+      default: {}
     },
     disk_redundancy           => 'EXTERNAL',
     disk_au_size              => '4',
@@ -85,8 +88,8 @@ class profile::oradb::asm_software(
   }
 
   -> file_line{ 'add_asm_to_oratab':
-    path   => '/etc/oratab',
-    line   => "+ASM:${profile::oradb::grid_home}:N",
+    path => '/etc/oratab',
+    line => "+ASM:${profile::oradb::grid_home}:N",
   }
 
 }

@@ -3,23 +3,79 @@ deployment_zone: vagrant
 
 role: role::oradb::simple_asm
 
-ora_profile::database::dbname:                            DB122
-ora_profile::database::version:                           12.2.0.1
-ora_profile::database::db_software::file_name:            linuxx64_12201_database
+ora_profile::database::dbname:                           DB122
+ora_profile::database::version:                          12.2.0.1
+ora_profile::database::db_software::file_name:           linuxx64_12201_database
 
-ora_profile::database::db_listener::oracle_home:          "%{::profile::oradb::grid_home}"
-ora_profile::database::db_listener::oracle_base:          "%{::profile::oradb::grid_base}"
+ora_profile::database::db_listener::oracle_home:         "%{::ora_profile::database::asm_software::grid_home}"
+ora_profile::database::db_listener::oracle_base:         "%{::ora_profile::database::oracle_base}"
 
-ora_profile::database::after_groups_and_users:            profile::oradb::nfs
-ora_profile::database::after_firewall:                    profile::oradb::asm_software
-ora_profile::database::before_db_software:                profile::oradb::asm_diskgroup
-ora_profile::database::db_definition:                     ora_profile::database::db_definition_template
 
-# Pre-ora_profile yaml data:
 
-# AFD:
-profile::oradb::asm_diskgroup::configure_afd: true
-profile::oradb::asm_diskgroup::disks:
+
+ora_profile::database::db_definition:                    ora_profile::database::db_definition_template
+
+ora_profile::database::packages::list:
+  smartmontools: {}
+
+# ------------------------------------------------------------------------------
+#
+#  Settings for asm_storage
+#
+# ------------------------------------------------------------------------------
+ora_profile::database::asm_storage::storage_type:        afd
+ora_profile::database::asm_storage::disk_devices:
+  asm_data01:
+    size: 8192
+    uuid: '1ATA_VBOX_HARDDISK_VB00000000-01000000'
+    afd_label: 'DATA1'
+  asm_data02:
+    size: 8192
+    uuid: '1ATA_VBOX_HARDDISK_VB00000000-02000000'
+    afd_label: 'DATA2'
+  asm_data03:
+    size: 8192
+    uuid: '1ATA_VBOX_HARDDISK_VB00000000-03000000'
+    afd_label: 'DATA3'
+  asm_reco01:
+    size: 8192
+    uuid: '1ATA_VBOX_HARDDISK_VB00000000-04000000'
+    afd_label: 'RECO1'
+  asm_reco02:
+    size: 8192
+    uuid: '1ATA_VBOX_HARDDISK_VB00000000-05000000'
+    afd_label: 'RECO2'
+
+# ------------------------------------------------------------------------------
+#
+#  Settings for asm_software
+#
+# ------------------------------------------------------------------------------
+ora_profile::database::asm_software::version:            12.2.0.1
+ora_profile::database::asm_software::dirs:
+- /u01/app/grid/product/12.2.0.1
+ora_profile::database::asm_software::grid_home:          /u01/app/grid/product/12.2.0.1/grid_home1
+ora_profile::database::asm_software::file_name:          linuxx64_12201_grid_home
+
+
+ora_profile::database::before_asm_diskgroup:                  ora_profile::database::asm_storage::afd_label
+# ------------------------------------------------------------------------------
+#
+#  Settings for asm_software
+#
+# ------------------------------------------------------------------------------
+ora_profile::database::asm_software::disk_discovery_string:   '/dev/asm_data*,/dev/asm_reco*'
+ora_profile::database::asm_software::asm_disks:               /dev/asm_data01
+ora_profile::database::asm_software::disks_failgroup_names:   '/dev/asm_data01,'
+ora_profile::database::asm_software::configure_afd:           true
+
+
+# ------------------------------------------------------------------------------
+#
+#  Settings for asm_diskgroup
+#
+# ------------------------------------------------------------------------------
+ora_profile::database::asm_diskgroup::disks:
   DATA:
     - diskname: 'DATA1'
       path: 'AFD:DATA1'
@@ -33,42 +89,23 @@ profile::oradb::asm_diskgroup::disks:
     - diskname: 'RECO2'
       path: 'AFD:RECO2'
 
-# NFS:
-# profile::oradb::asm_diskgroup::configure_afd: false
+
+  # Pre-ora_profile yaml data:
+
+# # AFD:
+# profile::oradb::asm_diskgroup::configure_afd: true
 # profile::oradb::asm_diskgroup::disks:
 #   DATA:
-#     - diskname: 'DATA_0000'
-#       path: '/nfs_client/asm_sda_nfs_b1'
-#     - diskname: 'DATA_0001'
-#       path: '/nfs_client/asm_sda_nfs_b2'
+#     - diskname: 'DATA1'
+#       path: 'AFD:DATA1'
+#     - diskname: 'DATA2'
+#       path: 'AFD:DATA2'
+#     - diskname: 'DATA3'
+#       path: 'AFD:DATA3'
 #   RECO:
-#     - diskname: 'RECO_0000'
-#       path: '/nfs_client/asm_sda_nfs_b3'
-#     - diskname: 'RECO_0001'
-#       path: '/nfs_client/asm_sda_nfs_b4'
+#     - diskname: 'RECO1'
+#       path: 'AFD:RECO1'
+#     - diskname: 'RECO2'
+#       path: 'AFD:RECO2'
 
-profile::oradb::disk_devices:
-  data01:
-    size: 8192
-    uuid: '1'
-    afd_label: 'DATA1'
-  data02:
-    size: 8192
-    uuid: '2'
-    afd_label: 'DATA2'
-  data03:
-    size: 8192
-    uuid: '3'
-    afd_label: 'DATA3'
-  reco01:
-    size: 8192
-    uuid: '4'
-    afd_label: 'RECO1'
-  reco02:
-    size: 8192
-    uuid: '5'
-    afd_label: 'RECO2'
 
-profile::oradb::asm_software::version:                     12.2.0.1
-profile::oradb::asm_software::file_name:                   linuxx64_12201_grid_home
-profile::oradb::grid_home:                                 /u01/app/grid/product/12.2.0.1/grid_home1

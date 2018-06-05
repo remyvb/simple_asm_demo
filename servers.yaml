@@ -57,4 +57,4 @@ pe-asm122:
   cpucount:         1
   type:             pe-agent
   virtualboxorafix: enable
-  box:              enterprisemodules/ol-7.3-x86_64-nocm
+  box:              enterprisemodules/centos-7.5-x86_64-nocm

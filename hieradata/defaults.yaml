@@ -1,8 +1,28 @@
 ---
+#------------------------------------------------------------------------------
+#
+# Set lookup merge behaviour
+#
+#------------------------------------------------------------------------------
+lookup_options:
+  "^ora_profile::database::(.*)::(.*)":
+    merge:
+      strategy: deep
+      merge_hash_arrays: true
+
 ora_profile::database::source:                                   puppet:///modules/software
+ora_profile::database::db_control_provider:                      srvctl
+ora_profile::database::ora_inventory_dir:                        /u01/app/grid/admin
+
 ora_profile::database::db_definition::system_password:           Welcome01
 ora_profile::database::db_definition::sys_password:              Change_on_1nstall
 ora_profile::database::db_startup::db_type:                      grid
+
+ora_profile::database::asm_storage:                              ora_profile::database::asm_storage
+ora_profile::database::asm_software:                             ora_profile::database::asm_software
+ora_profile::database::asm_diskgroup:                            ora_profile::database::asm_diskgroup
+
+nfs::storeconfigs_enabled: false
 
 #------------------------------------------------------------------------------
 #
@@ -10,12 +30,6 @@ ora_profile::database::db_startup::db_type:                      grid
 #
 #------------------------------------------------------------------------------
 ora_profile::database::groups_and_users::groups:
-  "%{::ora_profile::database::install_group}":
-    gid:  54321
-  "%{::ora_profile::database::dba_group}":
-    gid:  54322
-  oper:
-    gid:  54323
   asmdba:
     gid:  54324
   asmadmin:
@@ -27,19 +41,8 @@ ora_profile::database::groups_and_users::groups:
 #
 ora_profile::database::groups_and_users::users:
   "%{::ora_profile::database::os_user}":
-    uid:        54321
-    gid:        "%{::ora_profile::database::install_group}"
     groups:
-    - "%{::ora_profile::database::install_group}"
-    - "%{::ora_profile::database::dba_group}"
-    - oper
     - asmdba
-    - asmoper
-    shell:      /bin/bash
-    password:   '$1$DSJ51vh6$4XzzwyIOk6Bi/54kglGk3.'
-    home:       /home/oracle
-    comment:    This user oracle was created by Puppet
-    managehome: true
   grid:
     uid:        54322
     gid:        "%{::ora_profile::database::install_group}"
@@ -55,13 +58,6 @@ ora_profile::database::groups_and_users::users:
     comment:    This user grid was created by Puppet
     managehome: true
 
-
-# Pre-ora_profile yaml data:
-
-profile::download_dir:                                    /data/install
-profile::source_dir:                                      puppet:///modules/software
-profile::oradb::grid_user:                                grid
-profile::oradb::grid_group:                               oinstall
-profile::oradb::asm_sys_password:                         Welcome01
-profile::oradb::grid_base:                                /u01/app/grid/admin
-profile::oradb::ora_inventory_dir:                        /u01/app
+nfs::server_enabled: true
+nfs::client_enabled: false
+nfs::nfs_v4: false
