@@ -53,7 +53,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       srv.vm.network 'private_network', ip: server['private_ip'], virtualbox__intnet: true
       srv.vm.synced_folder '.', '/vagrant', type: :virtualbox
 
-      config.trigger.before :ALL do
+      config.trigger.before :up do
         if File.file?("#{home}/.netrc") && !File.file?("#{vagrant_root}/.netrc")
           info "Copy #{home}/.netrc to #{vagrant_root}/.netrc"
           FileUtils.copy_file("#{home}/.netrc", "#{vagrant_root}/.netrc")

@@ -1,3 +1,3 @@
-<% scope['::profile::oradb::disk_devices'].sort.each do | device, attrib | -%>
-KERNEL=="sd?" SUBSYSTEM=="block", PROGRAM="/usr/lib/udev/scsi_id -g -u -d /dev/$name", RESULT=="1ATA_VBOX_HARDDISK_VB00000000-0<%= attrib['uuid'] %>000000", SYMLINK+="<%= device %>", OWNER="grid", GROUP="oinstall", MODE="0660"
+<% scope['ora_profile::database::asm_storage::afd::disk_devices'].sort.each do | device, attrib | -%>
+KERNEL=="sd?" SUBSYSTEM=="block", PROGRAM="/usr/lib/udev/scsi_id -g -u -d /dev/$name", RESULT=="<%= attrib['uuid'] %>", SYMLINK+="<%= device %>", OWNER="<%= grid_user %>", GROUP="<%= grid_admingroup %>", MODE="0660"
 <% end -%>

@@ -1,3 +1,4 @@
+# Docs
 class profile::oradb(
   Stdlib::Absolutepath $grid_base,
   Stdlib::Absolutepath $grid_home,

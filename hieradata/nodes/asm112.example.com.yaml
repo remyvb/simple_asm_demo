@@ -3,38 +3,27 @@ deployment_zone: vagrant
 
 role: role::oradb::simple_asm
 
-ora_profile::database::dbname:                            DB112
-ora_profile::database::version:                           11.2.0.4
-ora_profile::database::oracle_home:                       "/u01/app/oracle/product/11.2.0.4/db_home1"
-ora_profile::database::db_software::database_type:        EE
-ora_profile::database::db_software::file_name:            p13390677_112040_Linux-x86-64
-ora_profile::database::db_definition::init_ora_template:  profile/init.ora.11.2.0.4.erb
-ora_profile::database::db_patches:                        skip
+ora_profile::database::dbname:                           DB112
+ora_profile::database::version:                          11.2.0.4
+ora_profile::database::oracle_home:                      /u01/app/oracle/product/11.2.0.4/db_home1
+ora_profile::database::db_software::database_type:       EE
+ora_profile::database::db_software::file_name:           p13390677_112040_Linux-x86-64
+ora_profile::database::db_definition::init_ora_template: profile/init.ora.11.2.0.4.erb
+ora_profile::database::db_patches:                       skip
 
-ora_profile::database::db_listener::oracle_home:          "%{::profile::oradb::grid_home}"
-ora_profile::database::db_listener::oracle_base:          "%{::profile::oradb::grid_base}"
-ora_profile::database::db_listener::sqlnet_version:       '11.2'
+ora_profile::database::db_listener::oracle_home:         "%{::ora_profile::database::asm_software::grid_home}"
+ora_profile::database::db_listener::oracle_base:         "%{::ora_profile::database::oracle_base}"
+ora_profile::database::db_listener::sqlnet_version:      '11.2'
 
+ora_profile::database::db_definition:                    ora_profile::database::db_definition_template
 
-ora_profile::database::after_groups_and_users:            profile::oradb::nfs
-ora_profile::database::after_firewall:                    profile::oradb::asm_software
-ora_profile::database::before_db_software:                profile::oradb::asm_diskgroup
-ora_profile::database::db_definition:                     ora_profile::database::db_definition_template
-
-# NFS:
-profile::oradb::asm_diskgroup::configure_afd: false
-profile::oradb::asm_diskgroup::disks:
-  DATA:
-    - diskname: 'DATA_0000'
-      path: '/nfs_client/asm_sda_nfs_b1'
-    - diskname: 'DATA_0001'
-      path: '/nfs_client/asm_sda_nfs_b2'
-  RECO:
-    - diskname: 'RECO_0000'
-      path: '/nfs_client/asm_sda_nfs_b3'
-    - diskname: 'RECO_0001'
-      path: '/nfs_client/asm_sda_nfs_b4'
-
-profile::oradb::asm_software::version:                     11.2.0.4
-profile::oradb::asm_software::file_name:                   p13390677_112040_Linux-x86-64_3of7.zip
-profile::oradb::grid_home:                                 /u01/app/grid/product/11.2.0.4/grid_home1
+# ------------------------------------------------------------------------------
+#
+#  Settings for asm_software
+#
+# ------------------------------------------------------------------------------
+ora_profile::database::asm_software::version:            11.2.0.4
+ora_profile::database::asm_software::dirs:
+- /u01/app/grid/product/11.2.0.4
+ora_profile::database::asm_software::grid_home:          /u01/app/grid/product/11.2.0.4/grid_home1
+ora_profile::database::asm_software::file_name:          p13390677_112040_Linux-x86-64_3of7.zip
