@@ -29,3 +29,11 @@
 .*.txt
 *.vdi
 .netrc
+/modules/archive
+/modules/augeasproviders_core
+/modules/augeasproviders_sysctl
+/modules/debconf
+/modules/echo
+/modules/firewall
+/modules/firewalld
+/modules/ora_profile
