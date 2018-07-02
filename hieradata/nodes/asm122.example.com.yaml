@@ -28,23 +28,23 @@ ora_profile::database::asm_storage::disk_devices:
   asm_data01:
     size: 8192
     uuid: '1ATA_VBOX_HARDDISK_VB00000000-01000000'
-    afd_label: 'DATA1'
+    label: 'DATA1'
   asm_data02:
     size: 8192
     uuid: '1ATA_VBOX_HARDDISK_VB00000000-02000000'
-    afd_label: 'DATA2'
+    label: 'DATA2'
   asm_data03:
     size: 8192
     uuid: '1ATA_VBOX_HARDDISK_VB00000000-03000000'
-    afd_label: 'DATA3'
+    label: 'DATA3'
   asm_reco01:
     size: 8192
     uuid: '1ATA_VBOX_HARDDISK_VB00000000-04000000'
-    afd_label: 'RECO1'
+    label: 'RECO1'
   asm_reco02:
     size: 8192
     uuid: '1ATA_VBOX_HARDDISK_VB00000000-05000000'
-    afd_label: 'RECO2'
+    label: 'RECO2'
 
 # ------------------------------------------------------------------------------
 #
