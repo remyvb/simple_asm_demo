@@ -1,2 +1,56 @@
 ---
-empty: true
+#------------------------------------------------------------------------------
+#
+# Set lookup merge behaviour
+#
+#------------------------------------------------------------------------------
+lookup_options:
+  "^ora_profile::database::(.*)::(.*)":
+    merge:
+      strategy: deep
+      merge_hash_arrays: true
+  ora_profile::database::asm_diskgroup::disks:
+    merge:
+      strategy: first
+  ora_profile::database::asm_software::disks_failgroup_names:
+    merge:
+      strategy: first
+
+
+# ------------------------------------------------------------------------------
+#
+#  Settings for database
+#
+# ------------------------------------------------------------------------------
+ora_profile::database::source:                                            puppet:///modules/software
+ora_profile::database::db_control_provider:                               srvctl
+ora_profile::database::ora_inventory_dir:                                 /u01/app
+ora_profile::database::storage:                                           asm
+
+
+# ------------------------------------------------------------------------------
+#
+#  Settings for database::db_definition
+#
+# ------------------------------------------------------------------------------
+ora_profile::database::db_definition::system_password:                    Welcome01
+ora_profile::database::db_definition::sys_password:                       Change_on_1nstall
+
+
+# ------------------------------------------------------------------------------
+#
+#  Settings for database::db_startup
+#
+# ------------------------------------------------------------------------------
+ora_profile::database::db_startup::db_type:                               grid
+
+
+#------------------------------------------------------------------------------
+#
+# NFS settings
+#
+#------------------------------------------------------------------------------
+nfs::storeconfigs_enabled: false
+nfs::server_enabled: true
+nfs::client_enabled: false
+nfs::nfs_v4: false

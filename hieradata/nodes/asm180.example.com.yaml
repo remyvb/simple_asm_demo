@@ -18,10 +18,10 @@ ora_profile::database::db_definition:                                     ora_pr
 #  Settings for database
 #
 # ------------------------------------------------------------------------------
-ora_profile::database::dbname:                                            DB121
-ora_profile::database::version:                                           12.1.0.2
-ora_profile::database::oracle_home:                                       /u01/app/oracle/product/12.1.0.2/db_home1
-ora_profile::database::grid_home:                                         /u01/app/grid/product/12.1.0.2/grid_home1
+ora_profile::database::dbname:                                            DB180
+ora_profile::database::version:                                           18.0.0.0
+ora_profile::database::oracle_home:                                       "/u01/app/oracle/product/%{lookup('ora_profile::database::version')}/db_home1"
+ora_profile::database::grid_home:                                         "/u01/app/grid/product/%{lookup('ora_profile::database::version')}/grid_home1"
 
 
 # ------------------------------------------------------------------------------
@@ -45,10 +45,10 @@ ora_profile::database::asm_storage::nfs_server:                           localh
 #  Settings for database::asm_software
 #
 # ------------------------------------------------------------------------------
-ora_profile::database::asm_software::version:                             12.1.0.2
+ora_profile::database::asm_software::version:                             "%{lookup('ora_profile::database::version')}"
 ora_profile::database::asm_software::dirs:
-- /u01/app/grid/product/12.1.0.2
-ora_profile::database::asm_software::file_name:                           linuxamd64_12102_grid
+- "/u01/app/grid/product/%{lookup('ora_profile::database::version')}"
+ora_profile::database::asm_software::file_name:                           LINUX.X64_180000_grid_home
 ora_profile::database::asm_software::disk_discovery_string:               '/nfs_client/asm*'
 ora_profile::database::asm_software::asm_disks:                           '/nfs_client/asm_sda_nfs_b1,/nfs_client/asm_sda_nfs_b2'
 ora_profile::database::asm_software::disks_failgroup_names:               ~
@@ -57,11 +57,32 @@ ora_profile::database::asm_software::configure_afd:                       false
 
 # ------------------------------------------------------------------------------
 #
+#  Settings for database::asm_diskgroup
+#
+# ------------------------------------------------------------------------------
+ora_profile::database::asm_diskgroup::disks:
+  DATA:
+    - diskname: 'DATA_0000'
+      path: '/nfs_client/asm_sda_nfs_b1'
+    - diskname: 'DATA_0001'
+      path: '/nfs_client/asm_sda_nfs_b2'
+  RECO:
+    - diskname: 'RECO_0000'
+      path: '/nfs_client/asm_sda_nfs_b3'
+    - diskname: 'RECO_0001'
+      path: '/nfs_client/asm_sda_nfs_b4'
+
+
+# ------------------------------------------------------------------------------
+#
 #  Settings for database::db_software
 #
 # ------------------------------------------------------------------------------
 ora_profile::database::db_software::database_type:                        EE
-ora_profile::database::db_software::file_name:                            linuxamd64_12102_database
+ora_profile::database::db_software::file_name:                            LINUX.X64_180000_db_home
+ora_profile::database::db_software::dirs:
+- /u01/app/oracle/product
+- "/u01/app/oracle/product/%{lookup('ora_profile::database::version')}"
 
 
 # ------------------------------------------------------------------------------
@@ -71,4 +92,4 @@ ora_profile::database::db_software::file_name:                            linuxa
 # ------------------------------------------------------------------------------
 ora_profile::database::asm_listener::oracle_home:                         "%{::ora_profile::database::grid_home}"
 ora_profile::database::asm_listener::oracle_base:                         "%{::ora_profile::database::oracle_base}"
-ora_profile::database::asm_listener::sqlnet_version:                      '12.1'
+ora_profile::database::asm_listener::sqlnet_version:                      '18.0'
