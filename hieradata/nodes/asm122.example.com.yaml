@@ -3,16 +3,39 @@ deployment_zone: vagrant
 
 role: role::oradb::simple_asm
 
-ora_profile::database::dbname:                                      DB122
-ora_profile::database::db_definition_template::system_password:     Welcome01
-ora_profile::database::db_definition_template::sys_password:        Change_on_1nstall
-ora_profile::database::asm_software::asm_sys_password:              Change_on_1nstall
-ora_profile::database::db_startup::db_type:                         grid
 
-ora_profile::database::db_definition:                               ora_profile::database::db_definition_template
-ora_profile::database::storage:                                     asm
-ora_profile::database::asm_storage::storage_type:                   afd
-ora_profile::database::before_asm_diskgroup:                        ora_profile::database::asm_storage::afd_label
+# ------------------------------------------------------------------------------
+#
+#  Class overrides and additions
+#
+# ------------------------------------------------------------------------------
+ora_profile::database::db_definition:                                     ora_profile::database::db_definition_template
+ora_profile::database::before_asm_diskgroup:                              ora_profile::database::asm_storage::afd_label
+
+# ------------------------------------------------------------------------------
+#
+#  Settings for database
+#
+# ------------------------------------------------------------------------------
+ora_profile::database::dbname:                                            DB122
+ora_profile::database::version:                                           12.2.0.1
+ora_profile::database::db_software::file_name:                            linuxx64_12201_database
+
+
+# # ------------------------------------------------------------------------------
+# #
+# #  Settings for database::asm_packages
+# #
+# # ------------------------------------------------------------------------------
+# ora_profile::database::asm_packages::list:
+#   smartmontools: {}
+
+# ------------------------------------------------------------------------------
+#
+#  Settings for database::asm_storage
+#
+# ------------------------------------------------------------------------------
+ora_profile::database::asm_storage::storage_type:                         afd
 ora_profile::database::asm_storage::disk_devices:
   asm_data01:
     size: 8192
@@ -35,3 +58,55 @@ ora_profile::database::asm_storage::disk_devices:
     uuid: '1ATA_VBOX_HARDDISK_VB00000000-05000000'
     label: 'RECO2'
 
+
+# ------------------------------------------------------------------------------
+#
+#  Settings for database::asm_software
+#
+# ------------------------------------------------------------------------------
+ora_profile::database::asm_software::version:                             12.2.0.1
+ora_profile::database::asm_software::dirs:
+- /u01/app/grid/product/12.2.0.1
+ora_profile::database::asm_software::grid_home:                           /u01/app/grid/product/12.2.0.1/grid_home1
+ora_profile::database::asm_software::file_name:                           linuxx64_12201_grid_home
+ora_profile::database::asm_software::disk_discovery_string:               '/dev/asm_data*,/dev/asm_reco*'
+ora_profile::database::asm_software::asm_disks:                           /dev/asm_data01
+ora_profile::database::asm_software::disks_failgroup_names:               '/dev/asm_data01,'
+ora_profile::database::asm_software::configure_afd:                       true
+
+
+# ------------------------------------------------------------------------------
+#
+#  Settings for database::asm_diskgroup
+#
+# ------------------------------------------------------------------------------
+ora_profile::database::asm_diskgroup::disks:
+  DATA:
+    - diskname: 'DATA1'
+      path: 'AFD:DATA1'
+    - diskname: 'DATA2'
+      path: 'AFD:DATA2'
+    - diskname: 'DATA3'
+      path: 'AFD:DATA3'
+  RECO:
+    - diskname: 'RECO1'
+      path: 'AFD:RECO1'
+    - diskname: 'RECO2'
+      path: 'AFD:RECO2'
+
+
+# ------------------------------------------------------------------------------
+#
+#  Settings for database::db_software
+#
+# ------------------------------------------------------------------------------
+ora_profile::database::db_software::file_name:                            linuxx64_12201_database
+
+
+# ------------------------------------------------------------------------------
+#
+#  Settings for database::asm_listener
+#
+# ------------------------------------------------------------------------------
+ora_profile::database::asm_listener::oracle_home:                         "%{::ora_profile::database::grid_home}"
+ora_profile::database::asm_listener::oracle_base:                         "%{::ora_profile::database::oracle_base}"

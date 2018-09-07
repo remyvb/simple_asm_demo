@@ -1,4 +1,5 @@
 # rubocop: disable Metrics/LineLength
+# rubocop: disable Metrics/BlockLength
 require 'yaml'
 
 VAGRANTFILE_API_VERSION = '2'.freeze
@@ -26,6 +27,41 @@ if add_timestamp
   end
 end
 
+#
+# This routine will read a ~/.software.yaml fileand make links to all the software defined.
+#
+def link_software
+  # Read YAML file with box details
+  software_file = File.expand_path('~/.software.yaml')
+  if File.exist?(software_file)
+    software_definition = YAML.load_file(software_file)
+    software_locations = software_definition.fetch('software_locations') do
+      raise "#{software_file} should contain key 'software_locations'"
+    end
+    raise "software_locations key in #{software_file} should contain array" unless software_locations.is_a?(Array)
+  else
+    software_locations = []
+  end
+  software_locations.unshift('./software') # Do local stuff first
+  FileUtils.mkdir_p('./modules/software/files') unless File.exist?('./modules/software/files')
+  software_locations.each { |dir| link_sync(dir, './modules/software/files') }
+end
+
+def link_sync(dir, target)
+  Dir.glob("#{dir}/*").each do |file|
+    file_name = File.basename(file)
+    if File.directory?(file)
+      FileUtils.mkdir("#{target}/#{file_name}") unless File.exist?("#{target}/#{file_name}")
+      link_sync(file, "#{target}/#{file_name}")
+      next
+    end
+    full_target = "#{target}/#{file_name}"
+    next if File.exist?(full_target)
+    puts "Linking file #{file} to #{full_target}..."
+    FileUtils.ln(file, full_target)
+  end
+end
+
 # Read YAML file with box details
 servers = YAML.load_file('servers.yaml')
 pe_puppet_user_id  = 495
@@ -40,9 +76,12 @@ home = ENV['HOME']
 # puppet_installer = 'puppet-enterprise-2016.1.2-el-7-x86_64/puppet-enterprise-installer'
 # puppet_installer = 'puppet-enterprise-2016.4.0-el-7-x86_64/puppet-enterprise-installer'
 # puppet_installer = 'puppet-enterprise-2016.5.1-el-7-x86_64/puppet-enterprise-installer'
-puppet_installer = 'puppet-enterprise-2017.3.5-el-7-x86_64/puppet-enterprise-installer'
+# puppet_installer = 'puppet-enterprise-2017.3.5-el-7-x86_64/puppet-enterprise-installer'
+puppet_installer = 'puppet-enterprise-2018.1.1-el-7-x86_64/puppet-enterprise-installer'
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  link_software
+
   config.ssh.insert_key = false
   servers.each do |name, server|
     config.vm.define name do |srv|
@@ -93,20 +132,21 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       case server['type']
       when 'masterless'
-        srv.vm.box = 'enterprisemodules/centos-7.2-x86_64-puppet' unless server['box']
+        srv.vm.box = 'enterprisemodules/centos-7.3-x86_64-nocm' unless server['box']
         unless File.file?(".#{hostname}.txt")
           srv.vm.provision :shell, inline: <<-EOD
 cat > /etc/hosts<< "EOF"
 127.0.0.1 localhost localhost.localdomain localhost4 localhost4.localdomain4
-192.168.254.10 master.example.com puppet master asmmaster asmmaster.example.com
+192.168.254.10 asmmaster.example.com puppet master
 #{server['public_ip']} #{hostname}.example.com #{hostname}
 EOF
 EOD
+
           srv.vm.provision :shell, path: 'vm-scripts/setup_puppet.sh'
         end
         srv.vm.provision :shell, inline: 'puppet apply /etc/puppetlabs/code/environments/production/manifests/site.pp --test'
       when 'pe-master'
-        srv.vm.box = 'puppetlabs/centos-7.2-64-nocm' unless server['box']
+        srv.vm.box = 'enterprisemodules/centos-7.3-x86_64-nocm' unless server['box']
         srv.vm.synced_folder '.', '/vagrant', owner: pe_puppet_user_id, group: pe_puppet_group_id
         srv.vm.provision :shell, inline: "/vagrant/modules/software/files/#{puppet_installer} -c /vagrant/pe.conf -y"
         #
@@ -132,12 +172,12 @@ EOD
         srv.vm.provision :shell, inline: 'systemctl restart pe-puppetserver.service'
         srv.vm.provision :shell, inline: 'puppet agent -t || true'
       when 'pe-agent'
-        srv.vm.box = 'enterprisemodules/centos-7.2-x86_64-nocm' unless server['box']
+        srv.vm.box = 'enterprisemodules/centos-7.3-x86_64-nocm' unless server['box']
         #
         # First we need to instal the agent.
         #
         unless File.file?(".#{hostname}.txt")
-          srv.vm.provision :shell, inline: 'curl -k https://master.example.com:8140/packages/current/install.bash | sudo bash'
+          srv.vm.provision :shell, inline: 'curl -k https://asmmaster.example.com:8140/packages/current/install.bash | sudo bash'
         end
         #
         # The agent installation also automatically start's it. In production, this is what you want. For now we

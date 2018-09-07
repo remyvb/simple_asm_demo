@@ -3,27 +3,72 @@ deployment_zone: vagrant
 
 role: role::oradb::simple_asm
 
-ora_profile::database::dbname:                           DB112
-ora_profile::database::version:                          11.2.0.4
-ora_profile::database::oracle_home:                      /u01/app/oracle/product/11.2.0.4/db_home1
-ora_profile::database::db_software::database_type:       EE
-ora_profile::database::db_software::file_name:           p13390677_112040_Linux-x86-64
-ora_profile::database::db_definition::init_ora_template: profile/init.ora.11.2.0.4.erb
-ora_profile::database::db_patches:                       skip
-
-ora_profile::database::db_listener::oracle_home:         "%{::ora_profile::database::asm_software::grid_home}"
-ora_profile::database::db_listener::oracle_base:         "%{::ora_profile::database::oracle_base}"
-ora_profile::database::db_listener::sqlnet_version:      '11.2'
-
-ora_profile::database::db_definition:                    ora_profile::database::db_definition_template
 
 # ------------------------------------------------------------------------------
 #
-#  Settings for asm_software
+#  Class overrides and additions
 #
 # ------------------------------------------------------------------------------
-ora_profile::database::asm_software::version:            11.2.0.4
+ora_profile::database::db_patches:                                        skip
+ora_profile::database::db_definition:                                     ora_profile::database::db_definition_template
+
+
+# ------------------------------------------------------------------------------
+#
+#  Settings for database
+#
+# ------------------------------------------------------------------------------
+ora_profile::database::dbname:                                            DB112
+ora_profile::database::version:                                           11.2.0.4
+ora_profile::database::oracle_home:                                       /u01/app/oracle/product/11.2.0.4/db_home1
+ora_profile::database::grid_home:                                         /u01/app/grid/product/11.2.0.4/grid_home1
+
+
+# ------------------------------------------------------------------------------
+#
+#  Settings for database::asm_storage
+#
+# ------------------------------------------------------------------------------
+ora_profile::database::asm_storage::storage_type:                         nfs
+ora_profile::database::asm_storage::nfs_files:
+- /home/nfs_server_data/asm_sda_nfs_b1
+- /home/nfs_server_data/asm_sda_nfs_b2
+- /home/nfs_server_data/asm_sda_nfs_b3
+- /home/nfs_server_data/asm_sda_nfs_b4
+ora_profile::database::asm_storage::nfs_mountpoint:                       /nfs_client
+ora_profile::database::asm_storage::nfs_export:                           /home/nfs_server_data
+ora_profile::database::asm_storage::nfs_server:                           localhost
+
+
+# ------------------------------------------------------------------------------
+#
+#  Settings for database::asm_software
+#
+# ------------------------------------------------------------------------------
+ora_profile::database::asm_software::version:                             11.2.0.4
 ora_profile::database::asm_software::dirs:
 - /u01/app/grid/product/11.2.0.4
-ora_profile::database::asm_software::grid_home:          /u01/app/grid/product/11.2.0.4/grid_home1
-ora_profile::database::asm_software::file_name:          p13390677_112040_Linux-x86-64_3of7.zip
+ora_profile::database::asm_software::file_name:                           p13390677_112040_Linux-x86-64_3of7.zip
+ora_profile::database::asm_software::disk_discovery_string:               '/nfs_client/asm*'
+ora_profile::database::asm_software::asm_disks:                           '/nfs_client/asm_sda_nfs_b1,/nfs_client/asm_sda_nfs_b2'
+ora_profile::database::asm_software::disks_failgroup_names:               ~
+ora_profile::database::asm_software::configure_afd:                       false
+
+
+# ------------------------------------------------------------------------------
+#
+#  Settings for database::db_software
+#
+# ------------------------------------------------------------------------------
+ora_profile::database::db_software::database_type:                        EE
+ora_profile::database::db_software::file_name:                            p13390677_112040_Linux-x86-64
+
+
+# ------------------------------------------------------------------------------
+#
+#  Settings for database::asm_listener
+#
+# ------------------------------------------------------------------------------
+ora_profile::database::asm_listener::oracle_home:                         "%{::ora_profile::database::grid_home}"
+ora_profile::database::asm_listener::oracle_base:                         "%{::ora_profile::database::oracle_base}"
+ora_profile::database::asm_listener::sqlnet_version:                      '11.2'
