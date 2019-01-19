@@ -248,15 +248,27 @@ EOD
                 '--medium', "#{disk_name}.vdi"
               ]
             else
-              vb.customize [
-                'storageattach', :id,
-                '--storagectl', 'SATA Controller',
-                '--port', (i + 1).to_s,
-                '--device', 0,
-                '--type', 'hdd',
-                '--medium', "#{disk_name}.vdi",
-                '--setuuid', "00000000-0000-0000-0000-00000000000#{disk_uuid}"
-              ]
+              if disk_uuid.to_i > 9
+                vb.customize [
+                  'storageattach', :id,
+                  '--storagectl', 'SATA Controller',
+                  '--port', (i + 1).to_s,
+                  '--device', 0,
+                  '--type', 'hdd',
+                  '--medium', "#{disk_name}.vdi",
+                  '--setuuid', "00000000-0000-0000-0000-0000000000#{disk_uuid}"
+                ]
+              else
+                vb.customize [
+                  'storageattach', :id,
+                  '--storagectl', 'SATA Controller',
+                  '--port', (i + 1).to_s,
+                  '--device', 0,
+                  '--type', 'hdd',
+                  '--medium', "#{disk_name}.vdi",
+                  '--setuuid', "00000000-0000-0000-0000-00000000000#{disk_uuid}"
+                ]
+              end
             end
           end
         end
