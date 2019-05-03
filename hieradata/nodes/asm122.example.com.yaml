@@ -82,6 +82,7 @@ ora_profile::database::asm_software::configure_afd:                       true
 # ------------------------------------------------------------------------------
 ora_profile::database::asm_diskgroup::disks:
   DATA:
+    disks:
     - diskname: 'DATA1'
       path: 'AFD:DATA1'
     - diskname: 'DATA2'
@@ -89,6 +90,7 @@ ora_profile::database::asm_diskgroup::disks:
     - diskname: 'DATA3'
       path: 'AFD:DATA3'
   RECO:
+    disks:
     - diskname: 'RECO1'
       path: 'AFD:RECO1'
     - diskname: 'RECO2'

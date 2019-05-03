@@ -21,11 +21,11 @@ mod 'derdanne-nfs',                         '2.0.8'
 #
 # The Enterprise Modules Oracle specific Modules
 #
-mod 'enterprisemodules-ora_config',         '3.2.2'
-mod 'enterprisemodules-easy_type',          '2.9.2'
-mod 'enterprisemodules-ora_install',        '4.1.0'
-mod 'enterprisemodules-ora_profile',        '0.8.1'
-mod 'enterprisemodules-ora_cis',            '2.0.0'
+mod 'enterprisemodules-ora_config',         '3.6.0'
+mod 'enterprisemodules-easy_type',          '2.9.8'
+mod 'enterprisemodules-ora_install',        '4.5.0'
+mod 'enterprisemodules-ora_profile',        '0.9.0'
+mod 'enterprisemodules-ora_cis',            '2.1.0'
 #
 # Modules that are part of the control repo. R10K doesn't need to touch these
 #
