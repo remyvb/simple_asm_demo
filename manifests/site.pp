@@ -1,6 +1,10 @@
 include stdlib                       # Make sure the standard functions are available
 include easy_type::license::activate  # Always include the license class. This makes sure all the license files are copied
 
+File {
+  backup => false,
+}
+
 #
 # This is the schedule used for applying patches. The databases and WebLogic instances
 # might go down during these times.
